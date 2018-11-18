@@ -17,67 +17,86 @@
  */
 
 #include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
+#include <PubSubClient.h>
 #include "Credentials.h"
 
 // Declaration of pins
 int pinLedRed = 9;
 int pinLedYellow = 10;
 
-char commandRed = 0;
-char commandYellow = 0;
+WiFiClient wifiClient;
+PubSubClient mqttClient(wifiClient);
 
 void setup() {
+  setupPins();
+  setupWifi();
+  setupMqtt();
+  Serial.begin(9600);
+}
+
+void setupPins() {
   pinMode(pinLedRed, OUTPUT);
   pinMode(pinLedYellow, OUTPUT);
+}
 
+void setupWifi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(wifiSsid.c_str(), wifiPassword.c_str());
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
   }
+}
 
-  Serial.begin(9600);
+void setupMqtt() {
+  mqttClient.setServer(mqttServer.c_str(), 1883);
+  mqttClient.setCallback(mqttCallback);
+}
+
+void mqttCallback(char* topic, byte* payload, unsigned int length) {
+  if (strcmp(topic, mqttTopic1.c_str()) == 0) {
+    handleCallbackTopic1(payload);
+  }
+
+  if (strcmp(topic, mqttTopic2.c_str()) == 0) {
+    handleCallbackTopic2(payload);
+  }
+}
+
+void mqttReconnect() {
+  while (!mqttClient.connected()) {
+    if (mqttClient.connect(mqttClientDescription.c_str(), mqttUsername.c_str(), mqttPassword.c_str())) {
+      mqttClient.subscribe(mqttTopic1.c_str());
+      mqttClient.subscribe(mqttTopic2.c_str());
+    } else {
+      delay(10000);
+    }
+  }
+}
+
+void handleCallbackTopic1(byte* payload) {
+  if ((char)payload[0] == '1') {
+    digitalWrite(pinLedRed,HIGH);
+    Serial.write('A');
+  } else {
+    digitalWrite(pinLedRed,LOW);
+    Serial.write('B');
+  }
+}
+
+void handleCallbackTopic2(byte* payload) {
+  if ((char)payload[0] == '1') {
+    digitalWrite(pinLedYellow,HIGH);
+    Serial.write('C');
+  } else {
+    digitalWrite(pinLedYellow,LOW);
+    Serial.write('D');
+  }
 }
 
 void loop() {
-  if (getString(device, "red") == String(1)) {
-    digitalWrite(pinLedRed,HIGH);
-    commandRed = 'A';
-  } else {
-    digitalWrite(pinLedRed,LOW);
-    commandRed = 'B';
+  if (!mqttClient.connected()) {
+    mqttReconnect();
   }
 
-
-  if (getString(device, "yellow") == String(1)) {
-    digitalWrite(pinLedYellow,HIGH);
-    commandYellow = 'C';
-  } else {
-    digitalWrite(pinLedYellow,LOW);
-    commandYellow = 'D';
-  }
-
-  Serial.write(commandRed);
-  Serial.write(commandYellow);
-
-  delay(1000);
-}
-
-void setString(String device, String key, String value) {
-  HTTPClient httpClient;
-  httpClient.begin(String("http://") + appEngineApplication + ".appspot.com/?device=" + device + "&key=" + key + "&value=" + value);
-  httpClient.GET();
-  httpClient.end();
-}
-
-String getString(String device, String key) {
-  HTTPClient httpClient;
-  httpClient.begin(String("http://") + appEngineApplication + ".appspot.com/?device=" + device + "&key=" + key);
-  String response;
-  if (httpClient.GET() == HTTP_CODE_OK) {
-    response = httpClient.getString();
-  }
-  httpClient.end();
-  return response;
+  mqttClient.loop();
 }

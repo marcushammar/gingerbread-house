@@ -17,7 +17,7 @@
  */
 
 #include <ESP8266WiFi.h>
-#include <ESP8266HTTPClient.h>
+#include <PubSubClient.h>
 #include "Credentials.h"
 
 // Declaration of pins
@@ -32,30 +32,49 @@ int valueYellow = 0;
 boolean buttonRedCurrentlyChanging = false;
 boolean buttonYellowCurrentlyChanging = false;
 
+WiFiClient wifiClient;
+PubSubClient mqttClient(wifiClient);
+
 void setup() {
+  setupPins();
+  setupWifi();
+  setupMqtt();
+}
+
+void setupPins() {
   pinMode(pinLedYellow, OUTPUT);
   pinMode(pinLedRed, OUTPUT);
+}
 
+void setupWifi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(wifiSsid.c_str(), wifiPassword.c_str());
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
   }
+}
 
-  if (getString(device, "red") == String(1)) {
-    valueRed = 1;
-    digitalWrite(pinLedRed,HIGH);
-  }
-
-  if (getString(device, "yellow") == String(1)) {
-    valueYellow = 1;
-    digitalWrite(pinLedYellow,HIGH);
-  }
+void setupMqtt() {
+  mqttClient.setServer(mqttServer.c_str(), 1883);
 }
 
 void loop() {
-  checkAndUpdateButton(pinButtonRed, pinLedRed, "red", buttonRedCurrentlyChanging, valueRed);
-  checkAndUpdateButton(pinButtonYellow, pinLedYellow, "yellow", buttonYellowCurrentlyChanging, valueYellow);
+  checkAndUpdateButton(pinButtonRed, pinLedRed, mqttTopic1, buttonRedCurrentlyChanging, valueRed);
+  checkAndUpdateButton(pinButtonYellow, pinLedYellow, mqttTopic2, buttonYellowCurrentlyChanging, valueYellow);
+
+  if (!mqttClient.connected()) {
+    mqttReconnect();
+  }
+
+  mqttClient.loop();
+}
+
+void mqttReconnect() {
+  while (!mqttClient.connected()) {
+    if (!mqttClient.connect(mqttClientDescription.c_str(), mqttUsername.c_str(), mqttPassword.c_str())) {
+      delay(10000);
+    }
+  }
 }
 
 void checkAndUpdateButton(int pinButton, int pinLed, String key, boolean &buttonCurrentlyChanging, int &value) {
@@ -69,27 +88,10 @@ void checkAndUpdateButton(int pinButton, int pinLed, String key, boolean &button
         value = 0;
         digitalWrite(pinLed,LOW);
       }
-      setString(device, key, String(value));
+      mqttClient.publish(key.c_str(), String(value).c_str());
     }
   } else {
     buttonCurrentlyChanging = false;
   }
-}
-
-void setString(String device, String key, String value) {
-  HTTPClient httpClient;
-  httpClient.begin(String("http://") + appEngineApplication + ".appspot.com/?device=" + device + "&key=" + key + "&value=" + value);
-  httpClient.GET();
-  httpClient.end();
-}
-
-String getString(String device, String key) {
-  HTTPClient httpClient;
-  httpClient.begin(String("http://") + appEngineApplication + ".appspot.com/?device=" + device + "&key=" + key);
-  String response;
-  if (httpClient.GET() == HTTP_CODE_OK) {
-    response = httpClient.getString();
-  }
-  httpClient.end();
-  return response;
+  delay(50);
 }

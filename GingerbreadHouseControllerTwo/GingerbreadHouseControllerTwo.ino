@@ -48,7 +48,7 @@ void setupWifi() {
 }
 
 void setupMqtt() {
-  mqttClient.setServer(mqttServer.c_str(), 1883);
+  mqttClient.setServer(mqttServer.c_str(), mqttServerPort);
   mqttClient.setCallback(mqttCallback);
 }
 

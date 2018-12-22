@@ -9,4 +9,5 @@ Hardware
 * Arduino Uno Rev. 3 running GingerbreadHouseControllerOne
 * NodeMCU running GingerbreadHouseControllerTwo
 * Arduino MKR WiFi 1010 running GingerbreadHouseControllerThree
+* Arduino MKR WiFi 1010 running GingerbreadHouseControllerFour
 * NodeMCU running GingerbreadHouseRemote

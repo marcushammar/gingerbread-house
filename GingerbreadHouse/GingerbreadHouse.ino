@@ -1,12 +1,15 @@
 #include <Adafruit_NeoPixel.h>
 #include <WiFiNINA.h>
 #include <PubSubClient.h>
+#include <Servo.h>
 #include "Credentials.h"
 
 #define LED_PIN 1
 #define LED_COUNT 30
+#define SERVO_PIN 5
 
 Adafruit_NeoPixel leds(LED_COUNT, LED_PIN);
+Servo servo;
 WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
 
@@ -18,11 +21,13 @@ enum lightColor {
 };
 
 lightColor lights = OFF;
+bool servoRunning = false;
 
 void setup() {
   setupWifi();
   setupMqtt();
   setupLeds();
+  setupServo();
 }
 
 void setupWifi() {
@@ -43,13 +48,20 @@ void setupLeds() {
   leds.begin();
 }
 
+void setupServo() {
+  servo.attach(SERVO_PIN);
+}
+
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
-  if (strcmp(topic, mqttTopic.c_str()) == 0) {
-    handleCallback(payload);
+  if (strcmp(topic, mqttTopicLights.c_str()) == 0) {
+    handleCallbackLights(payload);
+  }
+  if (strcmp(topic, mqttTopicServo.c_str()) == 0) {
+    handleCallbackServo(payload);
   }
 }
 
-void handleCallback(byte* payload) {
+void handleCallbackLights(byte* payload) {
   switch((char)payload[0]) {
     case '0':
       lights = OFF;
@@ -66,10 +78,19 @@ void handleCallback(byte* payload) {
   }
 }
 
+void handleCallbackServo(byte* payload) {
+  if ((char)payload[0] == '1') {
+    servoRunning = true;
+  } else {
+    servoRunning = false;
+  }
+}
+
 void mqttReconnect() {
   while (!mqttClient.connected()) {
     if (mqttClient.connect(mqttClientDescription.c_str(), mqttUsername.c_str(), mqttPassword.c_str())) {
-      mqttClient.subscribe(mqttTopic.c_str());
+      mqttClient.subscribe(mqttTopicLights.c_str());
+      mqttClient.subscribe(mqttTopicServo.c_str());
     } else {
       delay(5000);
     }
@@ -79,6 +100,7 @@ void mqttReconnect() {
 void loop() {
   loopMqtt();
   loopLeds();
+  loopServo();
 }
 
 void loopLeds() {
@@ -92,6 +114,14 @@ void loopLeds() {
     changeLights(0, 0, 0);
   }
   delay(100);
+}
+
+void loopServo() {
+  if (servoRunning) {
+    servo.write(0);
+  } else {
+    servo.write(90);
+  }
 }
 
 void changeLights(int r, int g, int b) {

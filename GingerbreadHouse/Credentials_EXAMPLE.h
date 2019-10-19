@@ -8,4 +8,5 @@ const int mqttServerPort = 1883;
 String mqttClientDescription = "YOUR_MQTT_CLIENT_DESCRIPTION";
 String mqttUsername = "YOUR_MQTT_USERNAME";
 String mqttPassword = "YOUR_MQTT_PASSWORD";
-String mqttTopic = "YOUR_MQTT_TOPIC";
+String mqttTopicLights = "YOUR_MQTT_TOPIC";
+String mqttTopicServo = "YOUR_MQTT_TOPIC";

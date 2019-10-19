@@ -12,3 +12,4 @@ Hardware
 * Arduino MKR WiFi 1010 running GingerbreadHouseControllerFour
 * Arduino MKR WiFi 1010 running GingerbreadHouseControllerFive
 * NodeMCU running GingerbreadHouseRemote
+* Arduino MKR WiFi 1010 running GingerbreadHouse

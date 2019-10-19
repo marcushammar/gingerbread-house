@@ -7,8 +7,9 @@
 #define LED_PIN 1
 #define LED_COUNT 30
 #define SERVO_PIN 5
-#define LED_POWER 50
+#define LED_POWER_ZERO 0
 #define LED_POWER_HALF 25
+#define LED_POWER_FULL 50
 
 Adafruit_NeoPixel leds(LED_COUNT, LED_PIN);
 Servo servo;
@@ -111,15 +112,15 @@ void loop() {
 
 void loopLeds() {
   if (lights == RED) {
-    changeLights(LED_POWER, 0, 0);
+    changeLights(LED_POWER_FULL, LED_POWER_ZERO, LED_POWER_ZERO);
   } else if (lights == GREEN) {
-    changeLights(0, LED_POWER, 0);
+    changeLights(LED_POWER_ZERO, LED_POWER_FULL, LED_POWER_ZERO);
   } else if (lights == BLUE) {
-    changeLights(0, 0, LED_POWER);
+    changeLights(LED_POWER_ZERO, LED_POWER_ZERO, LED_POWER_FULL);
   } else if (lights == YELLOW) {
-    changeLights(LED_POWER_HALF, LED_POWER_HALF, 0);
+    changeLights(LED_POWER_HALF, LED_POWER_HALF, LED_POWER_ZERO);
   } else {
-    changeLights(0, 0, 0);
+    changeLights(LED_POWER_ZERO, LED_POWER_ZERO, LED_POWER_ZERO);
   }
   delay(100);
 }

@@ -8,6 +8,7 @@
 #define LED_COUNT 30
 #define SERVO_PIN 5
 #define LED_POWER 50
+#define LED_POWER_HALF 25
 
 Adafruit_NeoPixel leds(LED_COUNT, LED_PIN);
 Servo servo;
@@ -18,7 +19,8 @@ enum lightColor {
   OFF,
   RED,
   GREEN,
-  BLUE
+  BLUE,
+  YELLOW
 };
 
 lightColor lights = OFF;
@@ -76,6 +78,9 @@ void handleCallbackLights(byte* payload) {
     case '3':
       lights = BLUE;
       break;
+    case '4':
+      lights = YELLOW;
+      break;
   }
 }
 
@@ -111,6 +116,8 @@ void loopLeds() {
     changeLights(0, LED_POWER, 0);
   } else if (lights == BLUE) {
     changeLights(0, 0, LED_POWER);
+  } else if (lights == YELLOW) {
+    changeLights(LED_POWER_HALF, LED_POWER_HALF, 0);
   } else {
     changeLights(0, 0, 0);
   }

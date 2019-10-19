@@ -1,15 +1,15 @@
 Gingerbread House
 =================
 In this repository the source code can be found that has been used for the
-microcontrollers running the gingerbread house. Several microcontrollers have
-been used. See the section hardware below for more information.
+microcontroller running the gingerbread house.
 
 Hardware
 --------
-* Arduino Uno Rev. 3 running GingerbreadHouseControllerOne
-* NodeMCU running GingerbreadHouseControllerTwo
-* Arduino MKR WiFi 1010 running GingerbreadHouseControllerThree
-* Arduino MKR WiFi 1010 running GingerbreadHouseControllerFour
-* Arduino MKR WiFi 1010 running GingerbreadHouseControllerFive
-* NodeMCU running GingerbreadHouseRemote
-* Arduino MKR WiFi 1010 running GingerbreadHouse
+* Arduino MKR WiFi 1010
+* Adafruit NeoPixel LED Strip w/ Alligator Clips - 60 LED/m - 0.5 Meter Long - Black Flex
+* Luxorparts SG90 Micro-servo 800 g
+
+Software
+--------
+* Adafruit IO (for MQTT)
+* IFTTT - If This Then That (connect Google Assistant to Adafruit IO)

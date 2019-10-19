@@ -21,7 +21,9 @@ enum lightColor {
   RED,
   GREEN,
   BLUE,
-  YELLOW
+  YELLOW,
+  PINK,
+  TURQUOISE
 };
 
 lightColor lights = OFF;
@@ -82,6 +84,12 @@ void handleCallbackLights(byte* payload) {
     case '4':
       lights = YELLOW;
       break;
+    case '5':
+      lights = PINK;
+      break;
+    case '6':
+      lights = TURQUOISE;
+      break;
   }
 }
 
@@ -119,6 +127,10 @@ void loopLeds() {
     changeLights(LED_POWER_ZERO, LED_POWER_ZERO, LED_POWER_FULL);
   } else if (lights == YELLOW) {
     changeLights(LED_POWER_HALF, LED_POWER_HALF, LED_POWER_ZERO);
+  } else if (lights == PINK) {
+    changeLights(LED_POWER_HALF, LED_POWER_ZERO, LED_POWER_HALF);
+  } else if (lights == TURQUOISE) {
+    changeLights(LED_POWER_ZERO, LED_POWER_HALF, LED_POWER_HALF);
   } else {
     changeLights(LED_POWER_ZERO, LED_POWER_ZERO, LED_POWER_ZERO);
   }

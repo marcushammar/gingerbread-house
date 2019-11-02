@@ -6,13 +6,15 @@
 
 #define LED_PIN 1
 #define LED_COUNT 30
-#define SERVO_PIN 5
+#define SERVO_ONE_PIN 4
+#define SERVO_TWO_PIN 5
 #define LED_POWER_ZERO 0
 #define LED_POWER_HALF 25
 #define LED_POWER_FULL 50
 
 Adafruit_NeoPixel leds(LED_COUNT, LED_PIN);
-Servo servo;
+Servo servoOne;
+Servo servoTwo;
 WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
 
@@ -55,7 +57,8 @@ void setupLeds() {
 }
 
 void setupServo() {
-  servo.attach(SERVO_PIN);
+  servoOne.attach(SERVO_ONE_PIN);
+  servoTwo.attach(SERVO_TWO_PIN);
 }
 
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
@@ -139,10 +142,35 @@ void loopLeds() {
 
 void loopServo() {
   if (servoRunning) {
-    servo.write(0);
+    servoOneRunning();
+    servoTwoRunning();
   } else {
-    servo.write(90);
+    servoOneNotRunning();
+    servoTwoNotRunning();
   }
+}
+
+void servoOneRunning() {
+  servoOne.write(0);
+  delay(500);
+
+  servoOne.write(180);
+  delay(1000);
+
+  servoOne.write(90);
+  delay(500);
+}
+
+void servoOneNotRunning() {
+  servoOne.write(90);
+}
+
+void servoTwoRunning() {
+  servoTwo.write(0);
+}
+
+void servoTwoNotRunning() {
+  servoTwo.write(90);
 }
 
 void changeLights(int r, int g, int b) {

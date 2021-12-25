@@ -32,33 +32,51 @@ lightColor lights = OFF;
 bool servoRunning = false;
 
 void setup() {
+  setupSerial();
   setupWifi();
   setupMqtt();
   setupLeds();
   setupServo();
+  setupFinished();
+}
+
+void setupSerial() {
+  Serial.begin(9600);
 }
 
 void setupWifi() {
   delay(50);
+  Serial.print("Start WiFi login process...\n");
   WiFi.begin(wifiSsid.c_str(), wifiPassword.c_str());
+
+  Serial.print("Waiting for WiFi to be connected...");
 
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
+    Serial.print(".");
   }
+  Serial.print("\n");
 }
 
 void setupMqtt() {
+  Serial.print("Set up MQTT...\n");
   mqttClient.setServer(mqttServer.c_str(), mqttServerPort);
   mqttClient.setCallback(mqttCallback);
 }
 
 void setupLeds() {
+  Serial.print("Set up neopixel leds...\n");
   leds.begin();
 }
 
 void setupServo() {
+  Serial.print("Set up servo...\n");
   servoOne.attach(SERVO_ONE_PIN);
   servoTwo.attach(SERVO_TWO_PIN);
+}
+
+void setupFinished() {
+  Serial.print("Setup finished.\n");
 }
 
 void mqttCallback(char* topic, byte* payload, unsigned int length) {

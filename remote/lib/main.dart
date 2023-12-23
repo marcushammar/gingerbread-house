@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'credentials.dart';
 
-void main() => runApp(GingerbreadHouseRemote());
+void main() => runApp(const GingerbreadHouseRemote());
 
 void sendCommand(String feed, String value) async {
   print('Sending value ' + value + ' to feed ' + feed);
@@ -21,12 +21,16 @@ void sendCommand(String feed, String value) async {
 }
 
 class GingerbreadHouseRemote extends StatelessWidget {
+  const GingerbreadHouseRemote({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Gingerbread House Remote'),
+          title: const Text('Gingerbread House'),
+          backgroundColor: Colors.green,
+          foregroundColor: Colors.white,
         ),
         body: SingleChildScrollView(
           child: Column(
@@ -47,7 +51,8 @@ class GingerbreadHouseRemote extends StatelessWidget {
                 children: [
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.red,
+                      backgroundColor: Colors.red,
+                      foregroundColor: Colors.white,
                     ),
                     icon: const Icon(Icons.lightbulb),
                     label: const Text('Red'),
@@ -55,7 +60,8 @@ class GingerbreadHouseRemote extends StatelessWidget {
                   ),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.green,
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
                     ),
                     icon: const Icon(Icons.lightbulb),
                     label: const Text('Green'),
@@ -63,7 +69,8 @@ class GingerbreadHouseRemote extends StatelessWidget {
                   ),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.blue,
+                      backgroundColor: Colors.blue,
+                      foregroundColor: Colors.white,
                     ),
                     icon: const Icon(Icons.lightbulb),
                     label: const Text('Blue'),
@@ -71,7 +78,8 @@ class GingerbreadHouseRemote extends StatelessWidget {
                   ),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.yellow,
+                      backgroundColor: Colors.yellow,
+                      foregroundColor: Colors.white,
                     ),
                     icon: const Icon(Icons.lightbulb),
                     label: const Text('Yellow'),
@@ -79,7 +87,8 @@ class GingerbreadHouseRemote extends StatelessWidget {
                   ),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.pink,
+                      backgroundColor: Colors.pink,
+                      foregroundColor: Colors.white,
                     ),
                     icon: const Icon(Icons.lightbulb),
                     label: const Text('Pink'),
@@ -87,7 +96,8 @@ class GingerbreadHouseRemote extends StatelessWidget {
                   ),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      primary: Color.fromRGBO(0, 255, 255, 1.0),
+                      backgroundColor: const Color.fromRGBO(0, 255, 255, 1.0),
+                      foregroundColor: Colors.white,
                     ),
                     icon: const Icon(Icons.lightbulb),
                     label: const Text('Turquoise'),
@@ -95,7 +105,8 @@ class GingerbreadHouseRemote extends StatelessWidget {
                   ),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.grey,
+                      backgroundColor: Colors.grey,
+                      foregroundColor: Colors.white,
                     ),
                     icon: const Icon(Icons.lightbulb_outline),
                     label: const Text('No light'),
@@ -119,7 +130,8 @@ class GingerbreadHouseRemote extends StatelessWidget {
                 children: [
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.grey,
+                      backgroundColor: Colors.grey,
+                      foregroundColor: Colors.white,
                     ),
                     icon: const Icon(Icons.directions_run),
                     label: const Text('Start dancing'),
@@ -127,7 +139,8 @@ class GingerbreadHouseRemote extends StatelessWidget {
                   ),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.grey,
+                      backgroundColor: Colors.grey,
+                      foregroundColor: Colors.white,
                     ),
                     icon: const Icon(Icons.block),
                     label: const Text('Stop dancing'),
